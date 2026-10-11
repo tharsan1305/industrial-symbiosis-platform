@@ -1,0 +1,24 @@
+{
+  "name": "ReLoop - Circular Industrial Waste Exchange",
+  "short_name": "ReLoop",
+  "description": "B2B industrial circular waste exchange and symbiosis platform connecting verified industries.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#064e3b",
+  "theme_color": "#064e3b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%23064e3b'/><circle cx='96' cy='96' r='60' stroke='%2334d399' stroke-width='14' fill='none'/><path d='M96 36 L120 56 L96 76' fill='%2334d399'/><path d='M96 156 L72 136 L96 116' fill='%2334d399'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%23064e3b'/><circle cx='256' cy='256' r='160' stroke='%2334d399' stroke-width='36' fill='none'/><path d='M256 96 L320 150 L256 204' fill='%2334d399'/><path d='M256 416 L192 362 L256 308' fill='%2334d399'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

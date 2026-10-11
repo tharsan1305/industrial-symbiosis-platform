@@ -1,0 +1,6 @@
+{
+  "name": "ReLoop - Circular Industrial Waste Exchange",
+  "description": "B2B industrial circular waste exchange and symbiosis platform connecting verified industries across Tamil Nadu and beyond to trade by-products, cut emissions, and track digital material passports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
