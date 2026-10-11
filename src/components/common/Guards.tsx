@@ -1,43 +1,55 @@
 import React, { ReactNode } from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from '../../i18n/translations';
-import { ShieldAlert, AlertTriangle, Clock, CheckCircle2, FileText, ArrowRight } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, Clock, CheckCircle2, FileText, ArrowRight, Loader2 } from 'lucide-react';
 
-export const RoleGuard: React.FC<{
-  allowedRoles: ('industry' | 'admin')[];
+export const AuthGuard: React.FC<{
   children: ReactNode;
-}> = ({ allowedRoles, children }) => {
+  allowedRoles?: ('industry' | 'admin')[];
+}> = ({ children, allowedRoles }) => {
   const { user, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
+      <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+        <span className="text-xs text-slate-500 font-medium">Checking authorization...</span>
       </div>
     );
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    // Strictly prevent dashboard or internal portal access without login
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: location,
+          message: 'Access Restricted: You must sign in to access the Operations Dashboard.',
+        }}
+        replace
+      />
+    );
   }
 
-  if (!allowedRoles.includes(user.role)) {
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
     return (
-      <div className="max-w-2xl mx-auto my-12 p-8 bg-amber-50 border border-amber-200 rounded-xl text-stone-800">
+      <div className="max-w-2xl mx-auto my-12 p-8 bg-amber-50 dark:bg-stone-900 border border-amber-200 dark:border-amber-800 rounded-3xl text-stone-800 dark:text-stone-200 shadow-lg">
         <div className="flex items-start gap-4">
           <ShieldAlert className="w-8 h-8 text-amber-600 shrink-0 mt-1" />
           <div>
-            <h2 className="text-xl font-bold text-stone-900">Restricted Portal Access</h2>
-            <p className="mt-2 text-sm text-stone-600">
-              This administrative area requires authorized environmental officer credentials (Admin Role + MFA).
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Restricted Portal Access</h2>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+              This administrative area requires authorized credentials ({allowedRoles.join(' / ')} role).
             </p>
             <div className="mt-4 flex gap-3">
               <Link
-                to="/dashboard"
-                className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-sm font-medium transition"
+                to={user.role === 'admin' ? '/admin/verification' : '/dashboard'}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition"
               >
-                Return to Dashboard
+                Return to {user.role === 'admin' ? 'Regulatory Desk' : 'Operations Dashboard'}
               </Link>
             </div>
           </div>
@@ -48,6 +60,8 @@ export const RoleGuard: React.FC<{
 
   return <>{children}</>;
 };
+
+export const RoleGuard = AuthGuard;
 
 export const ApprovedGuard: React.FC<{
   children: ReactNode;

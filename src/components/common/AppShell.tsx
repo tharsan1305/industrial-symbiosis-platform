@@ -35,6 +35,7 @@ import {
   Eye,
   CheckCircle2,
   ExternalLink,
+  Lock,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -102,7 +103,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const status = profile?.status || 'pending';
 
   return (
-    <div className="min-h-screen bg-slate-50/70 dark:bg-stone-950 text-slate-900 dark:text-stone-100 flex flex-col font-sans transition-colors">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors">
       {/* Verification Status Banner (Only shown if pending/rejected for industry) */}
       {user?.role === 'industry' && status !== 'approved' && (
         <div
@@ -133,44 +134,62 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       )}
 
       {/* Main Top Bar: Professional Clean White & Emerald Header */}
-      <header className="sticky top-0 z-30 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-b border-emerald-100/90 dark:border-stone-800 shadow-xs">
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-emerald-100/90 dark:border-slate-800 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             {/* Mobile menu trigger */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-600 hover:bg-emerald-50 dark:hover:bg-stone-800 cursor-pointer"
+              className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-emerald-50 dark:hover:bg-slate-800 cursor-pointer"
               aria-label="Open mobile navigation"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
 
-            {/* Prominent Desktop Dashboard Sidebar Toggle Button */}
-            <button
-              onClick={toggleSidebarCollapse}
-              className={`hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition cursor-pointer ${
-                sidebarMode === 'hidden'
-                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/60 dark:border-emerald-800'
-                  : sidebarMode === 'collapsed'
-                  ? 'bg-white text-emerald-700 border-emerald-200 hover:bg-emerald-50 dark:bg-stone-800 dark:border-stone-700'
-                  : 'bg-emerald-50/70 text-emerald-800 border-emerald-200/80 hover:bg-emerald-100/70 dark:bg-stone-800 dark:border-stone-700'
-              }`}
-              title={
-                sidebarMode === 'hidden'
-                  ? 'Show Sidebar'
-                  : sidebarMode === 'collapsed'
-                  ? 'Expand Sidebar'
-                  : 'Collapse Sidebar'
-              }
-            >
-              <LayoutDashboard className="w-4 h-4 text-emerald-600" />
-              <span className="hidden xl:inline">Sidebar</span>
-              {sidebarMode === 'full' ? (
-                <PanelLeftClose className="w-3.5 h-3.5 text-emerald-700" />
-              ) : (
-                <PanelLeftOpen className="w-3.5 h-3.5 text-emerald-700" />
-              )}
-            </button>
+            {/* Dashboard Navigation / Sidebar Toggle Button (visible on md: and up) */}
+            {user ? (
+              <button
+                onClick={toggleSidebarCollapse}
+                className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer ${
+                  sidebarMode === 'hidden'
+                    ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm shadow-emerald-600/30 hover:bg-emerald-700'
+                    : sidebarMode === 'collapsed'
+                    ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 dark:bg-slate-800 dark:border-slate-700 dark:text-emerald-400'
+                    : 'bg-white text-emerald-800 border-emerald-200/90 hover:bg-emerald-50 dark:bg-slate-800 dark:border-slate-700'
+                }`}
+                title={
+                  sidebarMode === 'hidden'
+                    ? 'Open Dashboard Sidebar'
+                    : sidebarMode === 'collapsed'
+                    ? 'Expand Sidebar'
+                    : 'Collapse Sidebar'
+                }
+              >
+                <LayoutDashboard className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <span>Dashboard</span>
+                {sidebarMode === 'hidden' ? (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-500 text-white font-extrabold uppercase">
+                    Open
+                  </span>
+                ) : sidebarMode === 'collapsed' ? (
+                  <PanelLeftOpen className="w-3.5 h-3.5 opacity-80" />
+                ) : (
+                  <PanelLeftClose className="w-3.5 h-3.5 opacity-80" />
+                )}
+              </button>
+            ) : (
+              <Link
+                to="/dashboard"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-200 bg-white text-emerald-800 hover:bg-emerald-50 dark:bg-slate-800 dark:border-slate-700 dark:text-emerald-400 shadow-2xs transition"
+                title="Sign in required to access Operations Dashboard"
+              >
+                <LayoutDashboard className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <span>Dashboard</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold flex items-center gap-1">
+                  <Lock className="w-2.5 h-2.5" /> Sign In
+                </span>
+              </Link>
+            )}
 
             {/* Logo: Crisp White & Emerald */}
             <Link to="/" className="flex items-center gap-2.5 group">
@@ -208,24 +227,26 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               </div>
             )}
 
-            {/* Persona Switcher Pill (Clean Emerald Green) */}
-            <button
-              onClick={() => switchRoleForDemo(user?.role === 'admin' ? 'industry' : 'admin')}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 transition cursor-pointer"
-              title="Click to toggle between Industrial Member and TNPCB Admin view"
-            >
-              {user?.role === 'admin' ? (
-                <>
-                  <Shield className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Admin Desk</span>
-                </>
-              ) : (
-                <>
-                  <Factory className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Kothari Bio-Energy</span>
-                </>
-              )}
-            </button>
+            {/* Persona Switcher Pill (Clean Emerald Green - only for authenticated demo session) */}
+            {user && (
+              <button
+                onClick={() => switchRoleForDemo(user.role === 'admin' ? 'industry' : 'admin')}
+                className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-emerald-200 dark:border-emerald-800 bg-emerald-50/80 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 transition cursor-pointer"
+                title="Click to toggle between Industrial Member and TNPCB Admin view"
+              >
+                {user.role === 'admin' ? (
+                  <>
+                    <Shield className="w-3.5 h-3.5 text-amber-600" />
+                    <span>Admin Desk</span>
+                  </>
+                ) : (
+                  <>
+                    <Factory className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Kothari Bio-Energy</span>
+                  </>
+                )}
+              </button>
+            )}
 
             {/* Language Toggle (EN / தமிழ்) */}
             <div className="flex items-center bg-slate-100 dark:bg-stone-800 p-0.5 rounded-xl border border-slate-200 dark:border-stone-700 text-xs">
@@ -260,41 +281,43 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
             </button>
 
-            {/* Notifications Popover */}
-            <div className="relative">
-              <button
-                onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                className="p-2 rounded-xl text-slate-500 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-stone-800 transition relative cursor-pointer"
-                title="Notifications"
-              >
-                <Bell className="w-4 h-4" />
-                {notifications.some((n) => n.unread) && (
-                  <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-600 ring-2 ring-white dark:ring-stone-900" />
-                )}
-              </button>
+            {/* Notifications Popover (only for authenticated user) */}
+            {user && (
+              <div className="relative">
+                <button
+                  onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                  className="p-2 rounded-xl text-slate-500 hover:text-emerald-700 dark:hover:text-white hover:bg-emerald-50 dark:hover:bg-stone-800 transition relative cursor-pointer"
+                  title="Notifications"
+                >
+                  <Bell className="w-4 h-4" />
+                  {notifications.some((n) => n.unread) && (
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-600 ring-2 ring-white dark:ring-stone-900" />
+                  )}
+                </button>
 
-              {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-stone-900 rounded-2xl shadow-xl border border-emerald-100 dark:border-stone-800 p-3.5 z-50">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-stone-800">
-                    <span className="text-xs font-bold text-slate-900 dark:text-white">Notifications</span>
-                    <button
-                      onClick={() => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })))}
-                      className="text-[10px] text-emerald-600 hover:underline cursor-pointer font-semibold"
-                    >
-                      Mark all read
-                    </button>
+                {isNotificationsOpen && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-stone-900 rounded-2xl shadow-xl border border-emerald-100 dark:border-stone-800 p-3.5 z-50">
+                    <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-stone-800">
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">Notifications</span>
+                      <button
+                        onClick={() => setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })))}
+                        className="text-[10px] text-emerald-600 hover:underline cursor-pointer font-semibold"
+                      >
+                        Mark all read
+                      </button>
+                    </div>
+                    <div className="divide-y divide-slate-100 dark:divide-stone-800 max-h-64 overflow-y-auto">
+                      {notifications.map((n) => (
+                        <div key={n.id} className="py-2.5 text-xs">
+                          <p className="font-bold text-slate-900 dark:text-white">{n.title}</p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{n.desc}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="divide-y divide-slate-100 dark:divide-stone-800 max-h-64 overflow-y-auto">
-                    {notifications.map((n) => (
-                      <div key={n.id} className="py-2.5 text-xs">
-                        <p className="font-bold text-slate-900 dark:text-white">{n.title}</p>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{n.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
 
             {/* User Profile / Menu */}
             {user ? (
@@ -379,55 +402,54 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
       {/* Main Container Layout with Collapsible & Dismissible Desktop Sidebar */}
       <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-6">
-        {/* Desktop Collapsible Sidebar (White & Emerald Card) */}
-        {sidebarMode !== 'hidden' && (
+        {/* Responsive Collapsible Sidebar (Only shown when user is authenticated) */}
+        {user && sidebarMode !== 'hidden' && (
           <aside
-            className={`hidden lg:block shrink-0 transition-all duration-300 ${
+            className={`hidden md:block shrink-0 transition-all duration-300 ${
               sidebarMode === 'collapsed' ? 'w-20' : 'w-64'
             }`}
           >
-            <div className="sticky top-22 bg-white dark:bg-stone-900 rounded-3xl border border-emerald-100/90 dark:border-stone-800 p-3.5 shadow-sm shadow-emerald-950/5 space-y-4">
+            <div className="sticky top-22 bg-white dark:bg-slate-900 rounded-3xl border border-emerald-100/90 dark:border-slate-800 p-3.5 shadow-sm shadow-emerald-950/5 space-y-4">
               {/* Sidebar Header with Dashboard Icon & Close Buttons */}
-              <div className="flex items-center justify-between px-2 pt-1 border-b border-slate-100 dark:border-stone-800 pb-2.5">
-                {sidebarMode === 'full' ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center text-emerald-700 dark:text-emerald-400">
-                      <LayoutDashboard className="w-3.5 h-3.5" />
+              <div className="flex items-center justify-between px-2 pt-1 border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-xs">
+                    <LayoutDashboard className="w-4 h-4" />
+                  </div>
+                  {sidebarMode === 'full' && (
+                    <div>
+                      <span className="text-xs font-black text-slate-800 dark:text-slate-200 block leading-tight">
+                        Dashboard
+                      </span>
+                      <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-bold uppercase tracking-wider block">
+                        Operations
+                      </span>
                     </div>
-                    <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                      Operations
-                    </span>
-                  </div>
-                ) : (
-                  <div className="mx-auto">
-                    <LayoutDashboard className="w-4 h-4 text-emerald-600" />
-                  </div>
-                )}
+                  )}
+                </div>
 
                 <div className="flex items-center gap-1">
                   {/* Toggle Collapse */}
                   <button
                     onClick={toggleSidebarCollapse}
-                    className="p-1.5 text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-stone-800 rounded-lg transition cursor-pointer"
+                    className="p-1.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
                     title={sidebarMode === 'collapsed' ? 'Expand Sidebar' : 'Collapse to Icons'}
                   >
                     {sidebarMode === 'collapsed' ? (
-                      <ChevronRight className="w-4 h-4" />
+                      <ChevronRight className="w-4 h-4 text-emerald-600" />
                     ) : (
-                      <PanelLeftClose className="w-4 h-4" />
+                      <PanelLeftClose className="w-4 h-4 text-slate-600" />
                     )}
                   </button>
 
                   {/* Complete Close / Hide Sidebar Button */}
-                  {sidebarMode === 'full' && (
-                    <button
-                      onClick={() => updateSidebarMode('hidden')}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-stone-800 rounded-lg transition cursor-pointer"
-                      title="Hide Sidebar"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
+                  <button
+                    onClick={() => updateSidebarMode('hidden')}
+                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
+                    title="Close Sidebar"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
 
@@ -554,15 +576,16 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
           </aside>
         )}
 
-        {/* If sidebar is completely hidden, provide floating restore pill */}
-        {sidebarMode === 'hidden' && (
-          <div className="fixed bottom-6 left-6 z-40 hidden lg:block">
+        {/* If sidebar is completely hidden and user is authenticated, provide floating restore pill */}
+        {user && sidebarMode === 'hidden' && (
+          <div className="fixed bottom-6 left-6 z-40 hidden md:block">
             <button
               onClick={() => updateSidebarMode('full')}
-              className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-emerald-700/30 transition cursor-pointer"
+              className="flex items-center gap-2.5 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-2xl shadow-xl shadow-emerald-700/30 transition hover:scale-105 cursor-pointer"
             >
               <LayoutDashboard className="w-4 h-4" />
-              <span>Show Sidebar</span>
+              <span>Open Dashboard Sidebar</span>
+              <ChevronRight className="w-3.5 h-3.5 opacity-80" />
             </button>
           </div>
         )}
@@ -579,7 +602,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                   <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
                     <Recycle className="w-4 h-4" />
                   </div>
-                  <span className="font-bold text-sm text-slate-900 dark:text-white">Navigation Menu</span>
+                  <span className="font-bold text-sm text-slate-900 dark:text-white">ReLoop Navigation</span>
                 </div>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -589,16 +612,49 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 </button>
               </div>
 
+              {/* Mobile Auth Status Callout */}
+              {!user && (
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-100 dark:border-emerald-800 space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
+                    <Lock className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Login Required for Dashboard</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="py-2 text-center text-xs font-bold bg-white text-emerald-800 border border-emerald-200 rounded-xl hover:bg-emerald-50 transition"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="py-2 text-center text-xs font-bold bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition"
+                    >
+                      Register
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-1">
                 {navLinks.map((link) => (
                   <Link
                     key={link.to}
                     to={link.to}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-stone-300 hover:bg-emerald-50 dark:hover:bg-stone-800 hover:text-emerald-800"
+                    className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-stone-300 hover:bg-emerald-50 dark:hover:bg-stone-800 hover:text-emerald-800"
                   >
-                    <link.icon className="w-4 h-4 text-emerald-600" />
-                    <span>{link.label}</span>
+                    <div className="flex items-center gap-3">
+                      <link.icon className="w-4 h-4 text-emerald-600" />
+                      <span>{link.label}</span>
+                    </div>
+                    {!user && link.to !== '/marketplace' && (
+                      <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                        <Lock className="w-3 h-3" />
+                      </span>
+                    )}
                   </Link>
                 ))}
 

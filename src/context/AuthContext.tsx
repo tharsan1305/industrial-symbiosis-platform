@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, IndustryProfile } from '../types';
 import { authApi, industriesApi } from '../api';
+import { setAuthToken } from '../api/client';
 
 interface AuthContextType {
   user: User | null;
@@ -42,21 +43,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           setUser(currentUser);
           await fetchProfileForUser(currentUser);
         } else {
-          // Provide default logged in demo user for immediate seamless review
-          const defaultDemoUser: User = {
-            id: 'user-01',
-            email: 'sustainability@kotharibio.in',
-            role: 'industry',
-            industryId: 'ind-demo-current',
-            industryName: 'Kothari Bio-Energy & Allied Industries',
-            isMfaEnabled: true,
-            createdAt: '2024-04-10T10:00:00Z',
-          };
-          setUser(defaultDemoUser);
-          await fetchProfileForUser(defaultDemoUser);
+          // STRICT AUTHENTICATION: Keep user null. Users must log in via the Login page to access the dashboard!
+          setUser(null);
+          setProfile(null);
         }
       } catch (err) {
         console.error('Auth initialization error', err);
+        setUser(null);
+        setProfile(null);
       } finally {
         setIsLoading(false);
       }
@@ -108,6 +102,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isMfaEnabled: true,
         createdAt: '2023-01-01T00:00:00Z',
       };
+      setAuthToken('mock_jwt_token_reloop_admin-01');
       setUser(adminUser);
       setProfile(null);
     } else {
@@ -120,6 +115,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isMfaEnabled: true,
         createdAt: '2024-04-10T10:00:00Z',
       };
+      setAuthToken('mock_jwt_token_reloop_user-01');
       setUser(industryUser);
       fetchProfileForUser(industryUser);
     }

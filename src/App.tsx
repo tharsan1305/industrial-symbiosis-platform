@@ -31,6 +31,8 @@ import { SettingsPage } from './pages/SettingsPage';
 import { FeedbackPage } from './pages/FeedbackPage';
 import { PassportPage } from './pages/PassportPage';
 
+import { AuthGuard } from './components/common/Guards';
+
 // Admin Pages
 import { AdminVerificationPage } from './pages/admin/AdminVerificationPage';
 import { AdminComplaintsPage } from './pages/admin/AdminComplaintsPage';
@@ -58,41 +60,181 @@ export default function App() {
               <BrowserRouter>
                 <AppShell>
                   <Routes>
-                    {/* Public Routes */}
+                    {/* Public Browsing Routes */}
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                     <Route path="/reset-password" element={<ResetPasswordPage />} />
                     <Route path="/passport/:batchCode" element={<PassportPage />} />
-
-                    {/* Authenticated Industry Routes */}
-                    <Route path="/onboarding" element={<OnboardingPage />} />
-                    <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/marketplace" element={<MarketplacePage />} />
-                    <Route path="/listings" element={<ListingsPage />} />
-                    <Route path="/listings/new" element={<ListingFormPage />} />
-                    <Route path="/listings/:id/edit" element={<ListingFormPage />} />
                     <Route path="/listings/:id" element={<ListingDetailPage />} />
-                    <Route path="/requests" element={<RequestsPage />} />
-                    <Route path="/rfq" element={<RfqPage />} />
-                    <Route path="/deals" element={<DealsPage />} />
-                    <Route path="/deals/:id" element={<DealRoomPage />} />
-                    <Route path="/reviews/:dealId" element={<ReviewPage />} />
                     <Route path="/industries/:id" element={<IndustryProfilePage />} />
-                    <Route path="/complaints" element={<ComplaintsPage />} />
-                    <Route path="/network" element={<SymbiosisNetworkPage />} />
                     <Route path="/impact" element={<ImpactPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/feedback" element={<FeedbackPage />} />
 
-                    {/* Admin Regulatory Desk Routes */}
-                    <Route path="/admin/verification" element={<AdminVerificationPage />} />
-                    <Route path="/admin/complaints" element={<AdminComplaintsPage />} />
-                    <Route path="/admin/fraud" element={<AdminFraudPage />} />
-                    <Route path="/admin/audit" element={<AdminAuditPage />} />
-                    <Route path="/admin/emission-factors" element={<AdminEmissionFactorsPage />} />
-                    <Route path="/admin/analytics" element={<AdminAnalyticsPage />} />
+                    {/* Authenticated Industry Routes (Require Login) */}
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <AuthGuard>
+                          <DashboardPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/onboarding"
+                      element={
+                        <AuthGuard>
+                          <OnboardingPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/listings"
+                      element={
+                        <AuthGuard>
+                          <ListingsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/listings/new"
+                      element={
+                        <AuthGuard>
+                          <ListingFormPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/listings/:id/edit"
+                      element={
+                        <AuthGuard>
+                          <ListingFormPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/requests"
+                      element={
+                        <AuthGuard>
+                          <RequestsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/rfq"
+                      element={
+                        <AuthGuard>
+                          <RfqPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/deals"
+                      element={
+                        <AuthGuard>
+                          <DealsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/deals/:id"
+                      element={
+                        <AuthGuard>
+                          <DealRoomPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/reviews/:dealId"
+                      element={
+                        <AuthGuard>
+                          <ReviewPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/complaints"
+                      element={
+                        <AuthGuard>
+                          <ComplaintsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/network"
+                      element={
+                        <AuthGuard>
+                          <SymbiosisNetworkPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/settings"
+                      element={
+                        <AuthGuard>
+                          <SettingsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/feedback"
+                      element={
+                        <AuthGuard>
+                          <FeedbackPage />
+                        </AuthGuard>
+                      }
+                    />
+
+                    {/* Admin Regulatory Desk Routes (Require Login + Admin Role) */}
+                    <Route
+                      path="/admin/verification"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminVerificationPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/admin/complaints"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminComplaintsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/admin/fraud"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminFraudPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/admin/audit"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminAuditPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/admin/emission-factors"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminEmissionFactorsPage />
+                        </AuthGuard>
+                      }
+                    />
+                    <Route
+                      path="/admin/analytics"
+                      element={
+                        <AuthGuard allowedRoles={['admin']}>
+                          <AdminAnalyticsPage />
+                        </AuthGuard>
+                      }
+                    />
 
                     {/* Fallback */}
                     <Route path="*" element={<Navigate to="/" replace />} />

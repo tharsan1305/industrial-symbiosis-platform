@@ -11,7 +11,13 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    return (localStorage.getItem('reloop_theme') as Theme) || 'light';
+    // Priority: default to 'light' for clean white & emerald green theme requested by user
+    const saved = localStorage.getItem('reloop_theme_v2');
+    if (saved === 'dark' || saved === 'light') return saved;
+    // Clear old reloop_theme if it was set to dark
+    localStorage.removeItem('reloop_theme');
+    localStorage.setItem('reloop_theme_v2', 'light');
+    return 'light';
   });
 
   useEffect(() => {
@@ -21,7 +27,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('reloop_theme', theme);
+    localStorage.setItem('reloop_theme_v2', theme);
   }, [theme]);
 
   const toggleTheme = () => {

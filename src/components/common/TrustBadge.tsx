@@ -55,22 +55,27 @@ export const TrustScoreCard: React.FC<{ score: number; reviewCount: number; rati
   rating,
 }) => {
   return (
-    <div className="flex items-center gap-3 p-3 bg-stone-50 dark:bg-stone-800/60 rounded-lg border border-stone-200 dark:border-stone-700">
-      <div className="relative w-12 h-12 flex items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 font-extrabold text-sm border-2 border-emerald-500">
-        {score}
+    <div className="flex items-center gap-4 p-4 bg-emerald-50/70 dark:bg-emerald-950/40 rounded-2xl border border-emerald-100 dark:border-emerald-900/60 transition shadow-2xs">
+      <div className="relative w-14 h-14 shrink-0 flex flex-col items-center justify-center rounded-2xl bg-white dark:bg-slate-900 text-emerald-800 dark:text-emerald-300 font-black text-lg border-2 border-emerald-500 shadow-xs">
+        <span>{score}</span>
+        <span className="text-[8px] uppercase tracking-tighter text-emerald-600 dark:text-emerald-400 font-extrabold -mt-1">INDEX</span>
       </div>
-      <div>
+      <div className="min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="text-sm font-bold text-stone-900 dark:text-white">Trust & Compliance Score</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-stone-500 mt-0.5">
-          <span className="flex items-center text-amber-500 font-bold">
-            ★ {rating.toFixed(1)}
+          <span className="text-sm font-extrabold text-slate-900 dark:text-white truncate">
+            Trust & Compliance Score
           </span>
-          <span>·</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-stone-300 mt-1 font-medium">
+          <span className="flex items-center text-amber-500 font-bold gap-1">
+            <span>★</span>
+            <span>{rating.toFixed(1)}</span>
+          </span>
+          <span className="text-slate-300 dark:text-stone-600">·</span>
           <span>{reviewCount} verified reviews</span>
         </div>
       </div>
     </div>
   );
 };
+

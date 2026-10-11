@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   Recycle,
@@ -22,9 +22,18 @@ import {
 export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectFrom = (location.state as any)?.from?.pathname;
+  const redirectMessage = (location.state as any)?.message;
 
   // Active Login Section: 'industry' or 'admin'
-  const [activePortal, setActivePortal] = useState<'industry' | 'admin'>('industry');
+  const [activePortal, setActivePortal] = useState<'industry' | 'admin'>(() => {
+    if (redirectFrom && redirectFrom.startsWith('/admin')) {
+      return 'admin';
+    }
+    return 'industry';
+  });
 
   // Separate form state for Industry Login
   const [industryEmail, setIndustryEmail] = useState('sustainability@kotharibio.in');
@@ -58,7 +67,8 @@ export const LoginPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(industryEmail, industryPassword);
-      navigate('/dashboard');
+      const destination = redirectFrom && redirectFrom !== '/login' ? redirectFrom : '/dashboard';
+      navigate(destination, { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Industry credentials could not be verified.');
     } finally {
@@ -72,7 +82,8 @@ export const LoginPage: React.FC = () => {
     setIsSubmitting(true);
     try {
       await login(adminEmail, adminPassword, adminMfaCode || undefined);
-      navigate('/admin/verification');
+      const destination = redirectFrom && redirectFrom !== '/login' ? redirectFrom : '/admin/verification';
+      navigate(destination, { replace: true });
     } catch (err: any) {
       setError(err?.message || 'Admin authentication failed. Invalid officer clearance credentials.');
     } finally {
@@ -156,6 +167,19 @@ export const LoginPage: React.FC = () => {
             {activePortal === 'industry' ? 'TNPCB SECURE' : 'RESTRICTED'}
           </span>
         </div>
+
+        {/* Authentication Requirement Callout */}
+        {redirectMessage && (
+          <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl flex items-start gap-3 text-xs text-amber-900 dark:text-amber-200 shadow-xs">
+            <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold">Authentication Required to Access Dashboard</p>
+              <p className="mt-0.5 text-amber-800 dark:text-amber-300">
+                You cannot access the operations dashboard without signing in. Please verify your credentials below.
+              </p>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center gap-2 text-rose-700 dark:text-rose-300 text-xs font-semibold">
